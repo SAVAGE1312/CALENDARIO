@@ -7,7 +7,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:#f4f3ff;color:#1a1a2e;min-height:100vh;padding:1.25rem}
-.header{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap}
+.header{display:flex;align-items:center;gap:10px;margin-bottom:.75rem;flex-wrap:wrap}
 .header h1{font-size:1.5rem;font-weight:700;flex:1;background:linear-gradient(90deg,#6366f1,#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .nav-btn{background:#fff;border:none;border-radius:10px;padding:7px 14px;cursor:pointer;font-size:1rem;color:#6366f1;font-weight:600;transition:all .15s;box-shadow:0 1px 4px rgba(99,102,241,.12)}
 .nav-btn:hover{background:#6366f1;color:#fff;transform:scale(1.05)}
@@ -15,6 +15,18 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:#f4f3f
 .sync-label{font-size:.72rem;color:#999;display:flex;align-items:center;gap:5px;background:#fff;padding:5px 10px;border-radius:20px}
 .sync-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;transition:background .3s}
 .sync-dot.stale{background:#f59e0b}
+.facturacion-bar{background:#fff;border-radius:14px;padding:14px 20px;margin-bottom:1.1rem;box-shadow:0 1px 6px rgba(99,102,241,.1)}
+.fact-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.fact-label{font-size:.75rem;color:#a0a0b8;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.fact-amount{font-size:1.9rem;font-weight:700;background:linear-gradient(90deg,#22c55e,#16a34a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.02em;line-height:1}
+.fact-days{font-size:.72rem;color:#16a34a;background:#f0fdf4;border:1px solid #bbf7d0;padding:3px 10px;border-radius:20px;font-weight:600;margin-left:auto}
+.fact-bottom{display:flex;gap:10px;flex-wrap:wrap}
+.fact-sub{display:flex;align-items:center;gap:8px;background:#f8f8ff;border-radius:10px;padding:8px 14px;flex:1;min-width:130px;border:1px solid #ede9fe}
+.fact-sub-icon{font-size:1.1rem}
+.fact-sub-label{font-size:.68rem;color:#a0a0b8;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.fact-sub-amount{font-size:1rem;font-weight:700;color:#1a1a2e}
+.fact-sub.efectivo .fact-sub-amount{color:#16a34a}
+.fact-sub.datafono .fact-sub-amount{color:#6366f1}
 .legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem}
 .leg{display:flex;align-items:center;gap:5px;font-size:.73rem;font-weight:500;color:#555;background:#fff;padding:4px 10px;border-radius:20px}
 .leg-dot{width:8px;height:8px;border-radius:50%}
@@ -31,6 +43,7 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:#f4f3f
 .day-num{font-size:.82rem;font-weight:700;margin-bottom:5px;width:24px;height:24px;display:flex;align-items:center;justify-content:center}
 .btn-plus{position:absolute;top:6px;right:7px;background:none;border:none;font-size:1.1rem;color:#d0d0e8;cursor:pointer;line-height:1;padding:0;transition:all .15s}
 .btn-plus:hover{color:#6366f1;transform:scale(1.3)}
+.caja-badge{position:absolute;bottom:6px;right:4px;font-size:.58rem;font-weight:700;color:#16a34a;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:2px 5px;display:flex;align-items:center;gap:2px;white-space:nowrap}
 .ev-pill{font-size:.67rem;font-weight:600;border-radius:6px;padding:2px 6px;margin-bottom:3px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;display:flex;align-items:center;gap:3px}
 .ev-pill:hover{opacity:.82}
 .ev-pill.done{opacity:.55;text-decoration:line-through}
@@ -42,6 +55,24 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:#f4f3f
 .panel-close{background:none;border:none;font-size:1.2rem;cursor:pointer;color:#c0c0d8;transition:color .15s}
 .panel-close:hover{color:#6366f1}
 .panel-empty{font-size:.85rem;color:#c0c0d8;text-align:center;padding:1.5rem 0}
+.caja-section{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:12px;padding:14px 16px;margin-bottom:1rem}
+.caja-section-title{font-size:.75rem;font-weight:700;color:#15803d;letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.caja-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.caja-field-label{font-size:.7rem;font-weight:700;color:#15803d;margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.caja-input-row{display:flex;align-items:center;gap:6px}
+.caja-prefix{font-size:1rem;font-weight:700;color:#15803d}
+.caja-input{flex:1;border:2px solid #86efac;border-radius:9px;padding:7px 10px;font-size:.95rem;font-family:inherit;background:#fff;color:#15803d;font-weight:600;transition:border-color .15s;width:100%}
+.caja-input:focus{outline:none;border-color:#22c55e}
+.caja-total-row{display:flex;align-items:center;justify-content:space-between;background:#fff;border-radius:9px;padding:8px 12px;border:1.5px solid #86efac;margin-bottom:10px}
+.caja-total-label{font-size:.75rem;font-weight:700;color:#15803d}
+.caja-total-amount{font-size:1.1rem;font-weight:700;color:#15803d}
+.btn-caja-save{background:#22c55e;color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s;width:100%}
+.btn-caja-save:hover{background:#16a34a;transform:scale(1.02)}
+.caja-saved{display:flex;align-items:flex-start;gap:8px;margin-top:8px;flex-wrap:wrap}
+.caja-saved-main{font-size:.8rem;color:#15803d;font-weight:600;flex:1}
+.caja-saved-subs{font-size:.73rem;color:#16a34a;display:flex;gap:10px;flex-wrap:wrap;margin-top:2px}
+.btn-caja-del{background:none;border:none;font-size:.75rem;color:#a0a0b8;cursor:pointer;transition:color .15s;white-space:nowrap}
+.btn-caja-del:hover{color:#ef4444}
 .ev-card{display:flex;gap:12px;align-items:center;background:#faf9ff;border-radius:10px;padding:10px 12px;margin-bottom:8px;border:1px solid #ede9fe;transition:all .2s}
 .ev-card:hover{box-shadow:0 3px 12px rgba(99,102,241,.1)}
 .ev-card.done{background:#f0fdf4;border-color:#bbf7d0;opacity:.85}
@@ -51,7 +82,7 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:#f4f3f
 .ev-cat-badge{font-size:.68rem;font-weight:700;border-radius:20px;padding:2px 8px;color:#fff;letter-spacing:.02em}
 .ev-time{font-size:.74rem;color:#a0a0b8;font-weight:500}
 .ev-resp{font-size:.74rem;color:#a0a0b8;font-weight:500}
-.ev-title{font-size:.9rem;font-weight:600;color:#1a1a2e;transition:all .2s}
+.ev-title{font-size:.9rem;font-weight:600;color:#1a1a2e}
 .ev-card.done .ev-title{text-decoration:line-through;color:#6b7280}
 .ev-nota{font-size:.78rem;color:#7070a0;margin-top:4px;line-height:1.5}
 .card-btns{display:flex;flex-direction:column;gap:5px;flex-shrink:0;align-items:center}
@@ -100,6 +131,32 @@ textarea{resize:vertical;min-height:60px}
   <span class="sync-label"><span class="sync-dot" id="syncDot"></span><span id="syncText">conectando...</span></span>
 </div>
 
+<div class="facturacion-bar">
+  <div class="fact-top">
+    <div>
+      <div class="fact-label">💰 Facturación mensual</div>
+      <div class="fact-amount" id="factAmount">0,00 €</div>
+    </div>
+    <span class="fact-days" id="factDays">0 días con caja</span>
+  </div>
+  <div class="fact-bottom">
+    <div class="fact-sub efectivo">
+      <span class="fact-sub-icon">💵</span>
+      <div class="fact-sub-body">
+        <div class="fact-sub-label">Efectivo</div>
+        <div class="fact-sub-amount" id="factEfectivo">0,00 €</div>
+      </div>
+    </div>
+    <div class="fact-sub datafono">
+      <span class="fact-sub-icon">💳</span>
+      <div class="fact-sub-body">
+        <div class="fact-sub-label">Datáfono</div>
+        <div class="fact-sub-amount" id="factDatafono">0,00 €</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="legend">
   <span class="leg"><span class="leg-dot" style="background:#6366f1"></span>Turno</span>
   <span class="leg"><span class="leg-dot" style="background:#22c55e"></span>Reunión</span>
@@ -107,6 +164,7 @@ textarea{resize:vertical;min-height:60px}
   <span class="leg"><span class="leg-dot" style="background:#ef4444"></span>Urgente</span>
   <span class="leg"><span class="leg-dot" style="background:#8b5cf6"></span>Festivo</span>
   <span class="leg"><span class="leg-dot" style="background:#9ca3af"></span>Otro</span>
+  <span class="leg"><span class="leg-dot" style="background:#22c55e"></span>💰 Caja anotada</span>
 </div>
 
 <div class="grid-head">
@@ -119,6 +177,40 @@ textarea{resize:vertical;min-height:60px}
   <div class="panel-header">
     <h2 id="panelTitle"></h2>
     <button class="panel-close" id="panelClose">×</button>
+  </div>
+  <div class="caja-section">
+    <div class="caja-section-title">💰 Caja del día</div>
+    <div class="caja-fields">
+      <div>
+        <div class="caja-field-label">💵 Efectivo</div>
+        <div class="caja-input-row">
+          <span class="caja-prefix">€</span>
+          <input class="caja-input" type="number" id="cajaEfectivo" placeholder="0,00" min="0" step="0.01">
+        </div>
+      </div>
+      <div>
+        <div class="caja-field-label">💳 Datáfono</div>
+        <div class="caja-input-row">
+          <span class="caja-prefix">€</span>
+          <input class="caja-input" type="number" id="cajaDatafono" placeholder="0,00" min="0" step="0.01">
+        </div>
+      </div>
+    </div>
+    <div class="caja-total-row">
+      <span class="caja-total-label">Total del día</span>
+      <span class="caja-total-amount" id="cajaTotalPreview">0,00 €</span>
+    </div>
+    <button class="btn-caja-save" id="btnCajaGuardar">Guardar caja</button>
+    <div id="cajaSavedInfo" style="display:none" class="caja-saved">
+      <div class="caja-saved-main">
+        ✓ Total anotado: <strong id="cajaSavedTotal"></strong>
+        <div class="caja-saved-subs">
+          <span>💵 Efectivo: <strong id="cajaSavedEf"></strong></span>
+          <span>💳 Datáfono: <strong id="cajaSavedDf"></strong></span>
+        </div>
+      </div>
+      <button class="btn-caja-del" id="btnCajaDel">× Borrar</button>
+    </div>
   </div>
   <div id="panelList"></div>
 </div>
@@ -167,10 +259,9 @@ textarea{resize:vertical;min-height:60px}
   </div>
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB1fM5yajSzHp5c9CPHCENGeDPH5dhUriU",
@@ -187,47 +278,76 @@ const DOC_REF = doc(db, 'calendario', 'eventos');
 
 const CAT_COLORS={Turno:'#6366f1',Reunión:'#22c55e',Tarea:'#f59e0b',Urgente:'#ef4444',Festivo:'#8b5cf6',Otro:'#9ca3af'};
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-let evs={}, cur=new Date(), selDate=null, editId=null;
+let evs={}, cajas={}, cur=new Date(), selDate=null, editId=null;
 const $=id=>document.getElementById(id);
+const fmt=n=>parseFloat(n||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
 
-function setSyncStatus(status){
-  const dot=$('syncDot'), txt=$('syncText');
-  if(status==='ok'){dot.className='sync-dot';txt.textContent='sincronizado';}
-  else if(status==='saving'){dot.className='sync-dot stale';txt.textContent='guardando...';}
+function setSyncStatus(s){
+  const dot=$('syncDot'),txt=$('syncText');
+  if(s==='ok'){dot.className='sync-dot';txt.textContent='sincronizado';}
+  else if(s==='saving'){dot.className='sync-dot stale';txt.textContent='guardando...';}
   else{dot.className='sync-dot stale';txt.textContent='sin conexión';}
 }
 
 async function save(){
   setSyncStatus('saving');
-  try{
-    await setDoc(DOC_REF, {data: JSON.stringify(evs)});
-    setSyncStatus('ok');
-  }catch(e){setSyncStatus('error');}
+  try{await setDoc(DOC_REF,{data:JSON.stringify(evs),cajas:JSON.stringify(cajas)});setSyncStatus('ok');}
+  catch(e){setSyncStatus('error');}
 }
 
-// Escucha cambios en tiempo real — actualiza a todos los usuarios automáticamente
-onSnapshot(DOC_REF, function(snap){
+onSnapshot(DOC_REF,function(snap){
   if(snap.exists()){
-    const remote = JSON.parse(snap.data().data||'{}');
-    evs = remote;
+    evs=JSON.parse(snap.data().data||'{}');
+    cajas=JSON.parse(snap.data().cajas||'{}');
   }
   setSyncStatus('ok');
   render();
-  if(selDate && $('dayPanel').style.display==='block') openPanel(selDate);
-}, function(){setSyncStatus('error');});
+  if(selDate&&$('dayPanel').style.display==='block') openPanel(selDate);
+},function(){setSyncStatus('error');});
 
 function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36);}
 function dateKey(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
 
+function getMonthTotals(){
+  const y=cur.getFullYear(),m=cur.getMonth();
+  let total=0,efectivo=0,datafono=0,dias=0;
+  Object.keys(cajas).forEach(function(k){
+    const p=k.split('-').map(Number);
+    if(p[0]===y&&p[1]-1===m&&cajas[k]){
+      const c=cajas[k];
+      const ef=parseFloat(c.efectivo||0);
+      const df=parseFloat(c.datafono||0);
+      if(ef+df>0){efectivo+=ef;datafono+=df;total+=ef+df;dias++;}
+    }
+  });
+  return{total,efectivo,datafono,dias};
+}
+
+function updateFacturacion(){
+  const{total,efectivo,datafono,dias}=getMonthTotals();
+  $('factAmount').textContent=fmt(total);
+  $('factEfectivo').textContent=fmt(efectivo);
+  $('factDatafono').textContent=fmt(datafono);
+  $('factDays').textContent=dias+(dias===1?' día con caja':' días con caja');
+}
+
+function updateCajaPreview(){
+  const ef=parseFloat($('cajaEfectivo').value)||0;
+  const df=parseFloat($('cajaDatafono').value)||0;
+  $('cajaTotalPreview').textContent=fmt(ef+df);
+}
+
+$('cajaEfectivo').addEventListener('input',updateCajaPreview);
+$('cajaDatafono').addEventListener('input',updateCajaPreview);
+
 function toggleDone(id){
   if(!evs[selDate])return;
   const ev=evs[selDate].find(function(e){return e.id===id;});
-  if(!ev)return;
-  ev.done=!ev.done;
-  save();
+  if(!ev)return;ev.done=!ev.done;save();
 }
 
 function render(){
+  updateFacturacion();
   const y=cur.getFullYear(),m=cur.getMonth();
   $('month-label').textContent=MONTHS[m]+' '+y;
   const first=new Date(y,m,1),last=new Date(y,m+1,0);
@@ -244,6 +364,8 @@ function render(){
     const isToday=d.toDateString()===today.toDateString();
     const k=dateKey(d.getFullYear(),d.getMonth(),d.getDate());
     const dayEvs=evs[k]||[];
+    const caja=cajas[k];
+    const tieneCaja=!other&&caja&&(parseFloat(caja.efectivo||0)+parseFloat(caja.datafono||0))>0;
     const div=document.createElement('div');
     div.className='day'+(other?' other':'')+(isWE?' weekend':'')+(isToday?' today':'');
     const numEl=document.createElement('div');numEl.className='day-num';numEl.textContent=d.getDate();
@@ -263,6 +385,12 @@ function render(){
       div.appendChild(pill);
     });
     if(dayEvs.length>3){const m2=document.createElement('div');m2.className='more';m2.textContent='+'+(dayEvs.length-3)+' más';div.appendChild(m2);}
+    if(tieneCaja){
+      const total=parseFloat(caja.efectivo||0)+parseFloat(caja.datafono||0);
+      const badge=document.createElement('div');badge.className='caja-badge';
+      badge.textContent='💰 '+total.toLocaleString('es-ES',{minimumFractionDigits:0,maximumFractionDigits:0})+'€';
+      div.appendChild(badge);
+    }
     div.addEventListener('click',function(){openPanel(k);});
     cal.appendChild(div);
   });
@@ -273,6 +401,23 @@ function openPanel(k){
   const dayEvs=evs[k]||[];
   const parts=k.split('-').map(Number);
   $('panelTitle').textContent=parts[2]+' de '+MONTHS[parts[1]-1]+' de '+parts[0];
+  const caja=cajas[k];
+  if(caja&&(parseFloat(caja.efectivo||0)+parseFloat(caja.datafono||0))>0){
+    const ef=parseFloat(caja.efectivo||0);
+    const df=parseFloat(caja.datafono||0);
+    $('cajaEfectivo').value=ef||'';
+    $('cajaDatafono').value=df||'';
+    $('cajaTotalPreview').textContent=fmt(ef+df);
+    $('cajaSavedInfo').style.display='flex';
+    $('cajaSavedTotal').textContent=fmt(ef+df);
+    $('cajaSavedEf').textContent=fmt(ef);
+    $('cajaSavedDf').textContent=fmt(df);
+  }else{
+    $('cajaEfectivo').value='';
+    $('cajaDatafono').value='';
+    $('cajaTotalPreview').textContent='0,00 €';
+    $('cajaSavedInfo').style.display='none';
+  }
   const list=$('panelList');list.innerHTML='';
   if(!dayEvs.length){
     list.innerHTML='<p class="panel-empty">Sin eventos para este día.</p>';
@@ -305,6 +450,29 @@ function openPanel(k){
   $('dayPanel').style.display='block';
   $('dayPanel').scrollIntoView({behavior:'smooth',block:'start'});
 }
+
+$('btnCajaGuardar').addEventListener('click',function(){
+  if(!selDate)return;
+  const ef=parseFloat($('cajaEfectivo').value)||0;
+  const df=parseFloat($('cajaDatafono').value)||0;
+  if(ef+df<=0)return;
+  cajas[selDate]={efectivo:ef,datafono:df};
+  save();
+  $('cajaSavedInfo').style.display='flex';
+  $('cajaSavedTotal').textContent=fmt(ef+df);
+  $('cajaSavedEf').textContent=fmt(ef);
+  $('cajaSavedDf').textContent=fmt(df);
+  updateFacturacion();render();
+});
+
+$('btnCajaDel').addEventListener('click',function(){
+  if(!selDate)return;
+  delete cajas[selDate];
+  $('cajaEfectivo').value='';$('cajaDatafono').value='';
+  $('cajaTotalPreview').textContent='0,00 €';
+  $('cajaSavedInfo').style.display='none';
+  save();updateFacturacion();render();
+});
 
 function openModal(k){
   selDate=k;editId=null;
