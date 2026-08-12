@@ -24,7 +24,7 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:#f4f3f
 .fact-sub{display:flex;align-items:center;gap:8px;background:#f8f8ff;border-radius:10px;padding:8px 14px;flex:1;min-width:130px;border:1px solid #ede9fe}
 .fact-sub-icon{font-size:1.1rem}
 .fact-sub-label{font-size:.68rem;color:#a0a0b8;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
-.fact-sub-amount{font-size:1rem;font-weight:700;color:#1a1a2e}
+.fact-sub-amount{font-size:1rem;font-weight:700}
 .fact-sub.efectivo .fact-sub-amount{color:#16a34a}
 .fact-sub.datafono .fact-sub-amount{color:#6366f1}
 .legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.25rem}
@@ -58,7 +58,7 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:#f4f3f
 .caja-section{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1.5px solid #86efac;border-radius:12px;padding:14px 16px;margin-bottom:1rem}
 .caja-section-title{font-size:.75rem;font-weight:700;color:#15803d;letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .caja-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
-.caja-field-label{font-size:.7rem;font-weight:700;color:#15803d;margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.caja-field-label{font-size:.7rem;font-weight:700;color:#15803d;margin-bottom:4px}
 .caja-input-row{display:flex;align-items:center;gap:6px}
 .caja-prefix{font-size:1rem;font-weight:700;color:#15803d}
 .caja-input{flex:1;border:2px solid #86efac;border-radius:9px;padding:7px 10px;font-size:.95rem;font-family:inherit;background:#fff;color:#15803d;font-weight:600;transition:border-color .15s;width:100%}
@@ -67,7 +67,7 @@ body{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;background:#f4f3f
 .caja-total-label{font-size:.75rem;font-weight:700;color:#15803d}
 .caja-total-amount{font-size:1.1rem;font-weight:700;color:#15803d}
 .btn-caja-save{background:#22c55e;color:#fff;border:none;border-radius:9px;padding:8px 16px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s;width:100%}
-.btn-caja-save:hover{background:#16a34a;transform:scale(1.02)}
+.btn-caja-save:hover{background:#16a34a}
 .caja-saved{display:flex;align-items:flex-start;gap:8px;margin-top:8px;flex-wrap:wrap}
 .caja-saved-main{font-size:.8rem;color:#15803d;font-weight:600;flex:1}
 .caja-saved-subs{font-size:.73rem;color:#16a34a;display:flex;gap:10px;flex-wrap:wrap;margin-top:2px}
@@ -142,17 +142,11 @@ textarea{resize:vertical;min-height:60px}
   <div class="fact-bottom">
     <div class="fact-sub efectivo">
       <span class="fact-sub-icon">💵</span>
-      <div>
-        <div class="fact-sub-label">Efectivo</div>
-        <div class="fact-sub-amount" id="factEfectivo">0,00 €</div>
-      </div>
+      <div><div class="fact-sub-label">Efectivo</div><div class="fact-sub-amount" id="factEfectivo">0,00 €</div></div>
     </div>
     <div class="fact-sub datafono">
       <span class="fact-sub-icon">💳</span>
-      <div>
-        <div class="fact-sub-label">Datáfono</div>
-        <div class="fact-sub-amount" id="factDatafono">0,00 €</div>
-      </div>
+      <div><div class="fact-sub-label">Datáfono</div><div class="fact-sub-amount" id="factDatafono">0,00 €</div></div>
     </div>
   </div>
 </div>
@@ -183,17 +177,11 @@ textarea{resize:vertical;min-height:60px}
     <div class="caja-fields">
       <div>
         <div class="caja-field-label">💵 Efectivo</div>
-        <div class="caja-input-row">
-          <span class="caja-prefix">€</span>
-          <input class="caja-input" type="number" id="cajaEfectivo" placeholder="0,00" min="0" step="0.01">
-        </div>
+        <div class="caja-input-row"><span class="caja-prefix">€</span><input class="caja-input" type="number" id="cajaEfectivo" placeholder="0,00" min="0" step="0.01"></div>
       </div>
       <div>
         <div class="caja-field-label">💳 Datáfono</div>
-        <div class="caja-input-row">
-          <span class="caja-prefix">€</span>
-          <input class="caja-input" type="number" id="cajaDatafono" placeholder="0,00" min="0" step="0.01">
-        </div>
+        <div class="caja-input-row"><span class="caja-prefix">€</span><input class="caja-input" type="number" id="cajaDatafono" placeholder="0,00" min="0" step="0.01"></div>
       </div>
     </div>
     <div class="caja-total-row">
@@ -202,8 +190,7 @@ textarea{resize:vertical;min-height:60px}
     </div>
     <button class="btn-caja-save" id="btnCajaGuardar">Guardar caja</button>
     <div id="cajaSavedInfo" style="display:none" class="caja-saved">
-      <div class="caja-saved-main">
-        ✓ Total anotado: <strong id="cajaSavedTotal"></strong>
+      <div class="caja-saved-main">✓ Total anotado: <strong id="cajaSavedTotal"></strong>
         <div class="caja-saved-subs">
           <span>💵 Efectivo: <strong id="cajaSavedEf"></strong></span>
           <span>💳 Datáfono: <strong id="cajaSavedDf"></strong></span>
@@ -225,22 +212,12 @@ textarea{resize:vertical;min-height:60px}
     <button class="btn-add" id="btnAdd">+ Añadir evento</button>
     <div id="formWrap" style="display:none">
       <hr class="sep">
-      <div class="form-group">
-        <label>Título *</label>
-        <input id="fTitle" type="text" placeholder="Nombre del evento">
-      </div>
+      <div class="form-group"><label>Título *</label><input id="fTitle" type="text" placeholder="Nombre del evento"></div>
       <div class="form-row">
-        <div class="form-group">
-          <label>Responsable</label>
-          <input id="fResp" type="text" placeholder="Quién">
-        </div>
-        <div class="form-group">
-          <label>Hora</label>
-          <input id="fHora" type="time">
-        </div>
+        <div class="form-group"><label>Responsable</label><input id="fResp" type="text" placeholder="Quién"></div>
+        <div class="form-group"><label>Hora</label><input id="fHora" type="time"></div>
       </div>
-      <div class="form-group">
-        <label>Categoría</label>
+      <div class="form-group"><label>Categoría</label>
         <select id="fCat">
           <option value="Turno">Turno</option>
           <option value="Reunión">Reunión</option>
@@ -250,10 +227,7 @@ textarea{resize:vertical;min-height:60px}
           <option value="Otro">Otro</option>
         </select>
       </div>
-      <div class="form-group">
-        <label>Nota</label>
-        <textarea id="fNota" placeholder="Notas adicionales..."></textarea>
-      </div>
+      <div class="form-group"><label>Nota</label><textarea id="fNota" placeholder="Notas adicionales..."></textarea></div>
       <button class="btn-primary" id="btnSave">Guardar evento</button>
     </div>
   </div>
@@ -274,7 +248,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const COL_DIAS = collection(db, 'dias');
+const COL = collection(db, 'dias');
 
 const CAT_COLORS={Turno:'#6366f1',Reunión:'#22c55e',Tarea:'#f59e0b',Urgente:'#ef4444',Festivo:'#8b5cf6',Otro:'#9ca3af'};
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -293,25 +267,16 @@ async function saveDay(k){
     const dayEvs=evs[k]||[];
     const caja=cajas[k]||{};
     const isEmpty=dayEvs.length===0&&(parseFloat(caja.efectivo||0)+parseFloat(caja.datafono||0))===0;
-    if(isEmpty){
-      await deleteDoc(doc(db,'dias',k));
-    }else{
-      await setDoc(doc(db,'dias',k),{
-        eventos:JSON.stringify(dayEvs),
-        caja:JSON.stringify(caja)
-      });
-    }
+    if(isEmpty){await deleteDoc(doc(db,'dias',k));}
+    else{await setDoc(doc(db,'dias',k),{eventos:JSON.stringify(dayEvs),caja:JSON.stringify(caja)});}
     setSyncStatus('ok');
   }catch(e){setSyncStatus('error');console.error(e);}
 }
 
-onSnapshot(COL_DIAS,function(snap){
+onSnapshot(COL,function(snap){
   evs={};cajas={};
   snap.forEach(function(d){
-    try{
-      evs[d.id]=JSON.parse(d.data().eventos||'[]');
-      cajas[d.id]=JSON.parse(d.data().caja||'{}');
-    }catch(e){}
+    try{evs[d.id]=JSON.parse(d.data().eventos||'[]');cajas[d.id]=JSON.parse(d.data().caja||'{}');}catch(e){}
   });
   setSyncStatus('ok');
   render();
@@ -327,8 +292,7 @@ function getMonthTotals(){
   Object.keys(cajas).forEach(function(k){
     const p=k.split('-').map(Number);
     if(p[0]===y&&p[1]-1===m&&cajas[k]){
-      const ef=parseFloat(cajas[k].efectivo||0);
-      const df=parseFloat(cajas[k].datafono||0);
+      const ef=parseFloat(cajas[k].efectivo||0),df=parseFloat(cajas[k].datafono||0);
       if(ef+df>0){efectivo+=ef;datafono+=df;total+=ef+df;dias++;}
     }
   });
@@ -343,14 +307,14 @@ function updateFacturacion(){
   $('factDays').textContent=dias+(dias===1?' día con caja':' días con caja');
 }
 
-function updateCajaPreview(){
-  const ef=parseFloat($('cajaEfectivo').value)||0;
-  const df=parseFloat($('cajaDatafono').value)||0;
+$('cajaEfectivo').addEventListener('input',function(){
+  const ef=parseFloat($('cajaEfectivo').value)||0,df=parseFloat($('cajaDatafono').value)||0;
   $('cajaTotalPreview').textContent=fmt(ef+df);
-}
-
-$('cajaEfectivo').addEventListener('input',updateCajaPreview);
-$('cajaDatafono').addEventListener('input',updateCajaPreview);
+});
+$('cajaDatafono').addEventListener('input',function(){
+  const ef=parseFloat($('cajaEfectivo').value)||0,df=parseFloat($('cajaDatafono').value)||0;
+  $('cajaTotalPreview').textContent=fmt(ef+df);
+});
 
 function toggleDone(id){
   if(!evs[selDate])return;
@@ -363,8 +327,7 @@ function render(){
   const y=cur.getFullYear(),m=cur.getMonth();
   $('month-label').textContent=MONTHS[m]+' '+y;
   const first=new Date(y,m,1),last=new Date(y,m+1,0);
-  const start=(first.getDay()+6)%7;
-  const today=new Date();
+  const start=(first.getDay()+6)%7,today=new Date();
   const cells=[];
   for(let i=0;i<start;i++){const d=new Date(y,m,1-start+i);cells.push({d,other:true});}
   for(let d=1;d<=last.getDate();d++)cells.push({d:new Date(y,m,d),other:false});
@@ -372,23 +335,18 @@ function render(){
   const cal=$('cal');cal.innerHTML='';
   cells.forEach(function(cell){
     const d=cell.d,other=cell.other;
-    const wd=d.getDay(),isWE=wd===0||wd===6;
-    const isToday=d.toDateString()===today.toDateString();
+    const wd=d.getDay(),isWE=wd===0||wd===6,isToday=d.toDateString()===today.toDateString();
     const k=dateKey(d.getFullYear(),d.getMonth(),d.getDate());
-    const dayEvs=evs[k]||[];
-    const caja=cajas[k]||{};
+    const dayEvs=evs[k]||[],caja=cajas[k]||{};
     const tieneCaja=!other&&(parseFloat(caja.efectivo||0)+parseFloat(caja.datafono||0))>0;
     const div=document.createElement('div');
     div.className='day'+(other?' other':'')+(isWE?' weekend':'')+(isToday?' today':'');
-    const numEl=document.createElement('div');numEl.className='day-num';numEl.textContent=d.getDate();
-    div.appendChild(numEl);
+    const numEl=document.createElement('div');numEl.className='day-num';numEl.textContent=d.getDate();div.appendChild(numEl);
     const bp=document.createElement('button');bp.className='btn-plus';bp.textContent='+';bp.title='Añadir evento';
-    bp.addEventListener('click',function(e){e.stopPropagation();openModal(k);});
-    div.appendChild(bp);
+    bp.addEventListener('click',function(e){e.stopPropagation();openModal(k);});div.appendChild(bp);
     const sorted=[...dayEvs].sort(function(a,b){return(a.hora||'23:59').localeCompare(b.hora||'23:59');});
     sorted.slice(0,3).forEach(function(ev){
-      const pill=document.createElement('div');
-      pill.className='ev-pill'+(ev.done?' done':'');
+      const pill=document.createElement('div');pill.className='ev-pill'+(ev.done?' done':'');
       pill.style.background=CAT_COLORS[ev.cat]||'#9ca3af';
       if(ev.done){const tick=document.createElement('span');tick.className='pill-tick';tick.textContent='✓';pill.appendChild(tick);}
       const txt=document.createElement('span');txt.textContent=(ev.hora?ev.hora+' ':'')+ev.title;txt.style.overflow='hidden';txt.style.textOverflow='ellipsis';
@@ -410,30 +368,22 @@ function render(){
 
 function openPanel(k){
   selDate=k;
-  const dayEvs=evs[k]||[];
-  const parts=k.split('-').map(Number);
+  const dayEvs=evs[k]||[],parts=k.split('-').map(Number);
   $('panelTitle').textContent=parts[2]+' de '+MONTHS[parts[1]-1]+' de '+parts[0];
-  const caja=cajas[k]||{};
-  const ef=parseFloat(caja.efectivo||0);
-  const df=parseFloat(caja.datafono||0);
+  const caja=cajas[k]||{},ef=parseFloat(caja.efectivo||0),df=parseFloat(caja.datafono||0);
   if(ef+df>0){
-    $('cajaEfectivo').value=ef||'';
-    $('cajaDatafono').value=df||'';
+    $('cajaEfectivo').value=ef||'';$('cajaDatafono').value=df||'';
     $('cajaTotalPreview').textContent=fmt(ef+df);
     $('cajaSavedInfo').style.display='flex';
     $('cajaSavedTotal').textContent=fmt(ef+df);
-    $('cajaSavedEf').textContent=fmt(ef);
-    $('cajaSavedDf').textContent=fmt(df);
+    $('cajaSavedEf').textContent=fmt(ef);$('cajaSavedDf').textContent=fmt(df);
   }else{
-    $('cajaEfectivo').value='';
-    $('cajaDatafono').value='';
-    $('cajaTotalPreview').textContent='0,00 €';
-    $('cajaSavedInfo').style.display='none';
+    $('cajaEfectivo').value='';$('cajaDatafono').value='';
+    $('cajaTotalPreview').textContent='0,00 €';$('cajaSavedInfo').style.display='none';
   }
   const list=$('panelList');list.innerHTML='';
-  if(!dayEvs.length){
-    list.innerHTML='<p class="panel-empty">Sin eventos para este día.</p>';
-  }else{
+  if(!dayEvs.length){list.innerHTML='<p class="panel-empty">Sin eventos para este día.</p>';}
+  else{
     const sorted=[...dayEvs].sort(function(a,b){return(a.hora||'23:59').localeCompare(b.hora||'23:59');});
     sorted.forEach(function(ev){
       const c=CAT_COLORS[ev.cat]||'#9ca3af';
@@ -465,15 +415,12 @@ function openPanel(k){
 
 $('btnCajaGuardar').addEventListener('click',function(){
   if(!selDate)return;
-  const ef=parseFloat($('cajaEfectivo').value)||0;
-  const df=parseFloat($('cajaDatafono').value)||0;
+  const ef=parseFloat($('cajaEfectivo').value)||0,df=parseFloat($('cajaDatafono').value)||0;
   if(ef+df<=0)return;
-  cajas[selDate]={efectivo:ef,datafono:df};
-  saveDay(selDate);
+  cajas[selDate]={efectivo:ef,datafono:df};saveDay(selDate);
   $('cajaSavedInfo').style.display='flex';
   $('cajaSavedTotal').textContent=fmt(ef+df);
-  $('cajaSavedEf').textContent=fmt(ef);
-  $('cajaSavedDf').textContent=fmt(df);
+  $('cajaSavedEf').textContent=fmt(ef);$('cajaSavedDf').textContent=fmt(df);
   updateFacturacion();render();
 });
 
@@ -481,8 +428,7 @@ $('btnCajaDel').addEventListener('click',function(){
   if(!selDate)return;
   cajas[selDate]={};
   $('cajaEfectivo').value='';$('cajaDatafono').value='';
-  $('cajaTotalPreview').textContent='0,00 €';
-  $('cajaSavedInfo').style.display='none';
+  $('cajaTotalPreview').textContent='0,00 €';$('cajaSavedInfo').style.display='none';
   saveDay(selDate);updateFacturacion();render();
 });
 
@@ -514,8 +460,7 @@ function renderEvList(){
     const bd=document.createElement('button');bd.className='btn-sm danger';bd.textContent='Borrar';
     bd.addEventListener('click',function(){delEv(ev.id);renderEvList();if(selDate)openPanel(selDate);});
     acts.appendChild(be);acts.appendChild(bd);
-    item.appendChild(info);item.appendChild(acts);
-    list.appendChild(item);
+    item.appendChild(info);item.appendChild(acts);list.appendChild(item);
   });
 }
 
@@ -554,9 +499,6 @@ $('panelClose').addEventListener('click',function(){$('dayPanel').style.display=
 $('prev').addEventListener('click',function(){cur=new Date(cur.getFullYear(),cur.getMonth()-1,1);$('dayPanel').style.display='none';render();});
 $('next').addEventListener('click',function(){cur=new Date(cur.getFullYear(),cur.getMonth()+1,1);$('dayPanel').style.display='none';render();});
 $('todayBtn').addEventListener('click',function(){cur=new Date();$('dayPanel').style.display='none';render();});
-</script>
-</body>
-</html>
 </script>
 </body>
 </html>
