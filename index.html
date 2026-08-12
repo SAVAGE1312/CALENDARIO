@@ -142,14 +142,14 @@ textarea{resize:vertical;min-height:60px}
   <div class="fact-bottom">
     <div class="fact-sub efectivo">
       <span class="fact-sub-icon">💵</span>
-      <div class="fact-sub-body">
+      <div>
         <div class="fact-sub-label">Efectivo</div>
         <div class="fact-sub-amount" id="factEfectivo">0,00 €</div>
       </div>
     </div>
     <div class="fact-sub datafono">
       <span class="fact-sub-icon">💳</span>
-      <div class="fact-sub-body">
+      <div>
         <div class="fact-sub-label">Datáfono</div>
         <div class="fact-sub-amount" id="factDatafono">0,00 €</div>
       </div>
@@ -261,7 +261,7 @@ textarea{resize:vertical;min-height:60px}
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, doc, setDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import { getFirestore, doc, setDoc, deleteDoc, collection, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyB1fM5yajSzHp5c9CPHCENGeDPH5dhUriU",
@@ -274,7 +274,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const DOC_REF = doc(db, 'calendario', 'eventos');
+const COL_DIAS = collection(db, 'dias');
 
 const CAT_COLORS={Turno:'#6366f1',Reunión:'#22c55e',Tarea:'#f59e0b',Urgente:'#ef4444',Festivo:'#8b5cf6',Otro:'#9ca3af'};
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
@@ -283,27 +283,40 @@ const $=id=>document.getElementById(id);
 const fmt=n=>parseFloat(n||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
 
 function setSyncStatus(s){
-  const dot=$('syncDot'),txt=$('syncText');
-  if(s==='ok'){dot.className='sync-dot';txt.textContent='sincronizado';}
-  else if(s==='saving'){dot.className='sync-dot stale';txt.textContent='guardando...';}
-  else{dot.className='sync-dot stale';txt.textContent='sin conexión';}
+  $('syncDot').className='sync-dot'+(s==='ok'?'':' stale');
+  $('syncText').textContent=s==='ok'?'sincronizado':s==='saving'?'guardando...':'sin conexión';
 }
 
-async function save(){
+async function saveDay(k){
   setSyncStatus('saving');
-  try{await setDoc(DOC_REF,{data:JSON.stringify(evs),cajas:JSON.stringify(cajas)});setSyncStatus('ok');}
-  catch(e){setSyncStatus('error');}
+  try{
+    const dayEvs=evs[k]||[];
+    const caja=cajas[k]||{};
+    const isEmpty=dayEvs.length===0&&(parseFloat(caja.efectivo||0)+parseFloat(caja.datafono||0))===0;
+    if(isEmpty){
+      await deleteDoc(doc(db,'dias',k));
+    }else{
+      await setDoc(doc(db,'dias',k),{
+        eventos:JSON.stringify(dayEvs),
+        caja:JSON.stringify(caja)
+      });
+    }
+    setSyncStatus('ok');
+  }catch(e){setSyncStatus('error');console.error(e);}
 }
 
-onSnapshot(DOC_REF,function(snap){
-  if(snap.exists()){
-    evs=JSON.parse(snap.data().data||'{}');
-    cajas=JSON.parse(snap.data().cajas||'{}');
-  }
+onSnapshot(COL_DIAS,function(snap){
+  evs={};cajas={};
+  snap.forEach(function(d){
+    try{
+      evs[d.id]=JSON.parse(d.data().eventos||'[]');
+      cajas[d.id]=JSON.parse(d.data().caja||'{}');
+    }catch(e){}
+  });
   setSyncStatus('ok');
   render();
-  if(selDate&&$('dayPanel').style.display==='block') openPanel(selDate);
-},function(){setSyncStatus('error');});
+  if(selDate&&$('dayPanel').style.display==='block')openPanel(selDate);
+},function(e){setSyncStatus('error');console.error(e);});
 
 function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36);}
 function dateKey(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
@@ -314,9 +327,8 @@ function getMonthTotals(){
   Object.keys(cajas).forEach(function(k){
     const p=k.split('-').map(Number);
     if(p[0]===y&&p[1]-1===m&&cajas[k]){
-      const c=cajas[k];
-      const ef=parseFloat(c.efectivo||0);
-      const df=parseFloat(c.datafono||0);
+      const ef=parseFloat(cajas[k].efectivo||0);
+      const df=parseFloat(cajas[k].datafono||0);
       if(ef+df>0){efectivo+=ef;datafono+=df;total+=ef+df;dias++;}
     }
   });
@@ -343,7 +355,7 @@ $('cajaDatafono').addEventListener('input',updateCajaPreview);
 function toggleDone(id){
   if(!evs[selDate])return;
   const ev=evs[selDate].find(function(e){return e.id===id;});
-  if(!ev)return;ev.done=!ev.done;save();
+  if(!ev)return;ev.done=!ev.done;saveDay(selDate);
 }
 
 function render(){
@@ -364,8 +376,8 @@ function render(){
     const isToday=d.toDateString()===today.toDateString();
     const k=dateKey(d.getFullYear(),d.getMonth(),d.getDate());
     const dayEvs=evs[k]||[];
-    const caja=cajas[k];
-    const tieneCaja=!other&&caja&&(parseFloat(caja.efectivo||0)+parseFloat(caja.datafono||0))>0;
+    const caja=cajas[k]||{};
+    const tieneCaja=!other&&(parseFloat(caja.efectivo||0)+parseFloat(caja.datafono||0))>0;
     const div=document.createElement('div');
     div.className='day'+(other?' other':'')+(isWE?' weekend':'')+(isToday?' today':'');
     const numEl=document.createElement('div');numEl.className='day-num';numEl.textContent=d.getDate();
@@ -401,10 +413,10 @@ function openPanel(k){
   const dayEvs=evs[k]||[];
   const parts=k.split('-').map(Number);
   $('panelTitle').textContent=parts[2]+' de '+MONTHS[parts[1]-1]+' de '+parts[0];
-  const caja=cajas[k];
-  if(caja&&(parseFloat(caja.efectivo||0)+parseFloat(caja.datafono||0))>0){
-    const ef=parseFloat(caja.efectivo||0);
-    const df=parseFloat(caja.datafono||0);
+  const caja=cajas[k]||{};
+  const ef=parseFloat(caja.efectivo||0);
+  const df=parseFloat(caja.datafono||0);
+  if(ef+df>0){
     $('cajaEfectivo').value=ef||'';
     $('cajaDatafono').value=df||'';
     $('cajaTotalPreview').textContent=fmt(ef+df);
@@ -457,7 +469,7 @@ $('btnCajaGuardar').addEventListener('click',function(){
   const df=parseFloat($('cajaDatafono').value)||0;
   if(ef+df<=0)return;
   cajas[selDate]={efectivo:ef,datafono:df};
-  save();
+  saveDay(selDate);
   $('cajaSavedInfo').style.display='flex';
   $('cajaSavedTotal').textContent=fmt(ef+df);
   $('cajaSavedEf').textContent=fmt(ef);
@@ -467,11 +479,11 @@ $('btnCajaGuardar').addEventListener('click',function(){
 
 $('btnCajaDel').addEventListener('click',function(){
   if(!selDate)return;
-  delete cajas[selDate];
+  cajas[selDate]={};
   $('cajaEfectivo').value='';$('cajaDatafono').value='';
   $('cajaTotalPreview').textContent='0,00 €';
   $('cajaSavedInfo').style.display='none';
-  save();updateFacturacion();render();
+  saveDay(selDate);updateFacturacion();render();
 });
 
 function openModal(k){
@@ -518,8 +530,7 @@ function startEdit(id){
 function delEv(id){
   if(!evs[selDate])return;
   evs[selDate]=evs[selDate].filter(function(e){return e.id!==id;});
-  if(!evs[selDate].length)delete evs[selDate];
-  save();render();
+  saveDay(selDate);render();
 }
 
 function clearForm(){['fTitle','fResp','fHora','fNota'].forEach(function(id){$(id).value='';});$('fCat').value='Turno';}
@@ -532,7 +543,7 @@ $('btnSave').addEventListener('click',function(){
   if(!evs[selDate])evs[selDate]=[];
   if(editId){const idx=evs[selDate].findIndex(function(e){return e.id===editId;});if(idx>-1)evs[selDate][idx]=ev;}
   else evs[selDate].push(ev);
-  save();editId=null;clearForm();
+  saveDay(selDate);editId=null;clearForm();
   $('formWrap').style.display='none';$('btnAdd').style.display='';
   renderEvList();
 });
@@ -543,6 +554,9 @@ $('panelClose').addEventListener('click',function(){$('dayPanel').style.display=
 $('prev').addEventListener('click',function(){cur=new Date(cur.getFullYear(),cur.getMonth()-1,1);$('dayPanel').style.display='none';render();});
 $('next').addEventListener('click',function(){cur=new Date(cur.getFullYear(),cur.getMonth()+1,1);$('dayPanel').style.display='none';render();});
 $('todayBtn').addEventListener('click',function(){cur=new Date();$('dayPanel').style.display='none';render();});
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>
