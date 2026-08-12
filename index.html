@@ -294,7 +294,25 @@ async function migrateOldData(){
   }catch(e){console.error('Error migrando:',e);}
 }
 
-// Primero migra datos antiguos, luego escucha la colección nueva
+// Datos recuperados del formato antiguo — se escriben en la colección nueva
+const RECOVERED_CAJAS={"2026-06-26":{"efectivo":38,"datafono":59.5},"2026-06-03":{"efectivo":0,"datafono":58.95},"2026-06-04":{"efectivo":10,"datafono":0},"2026-06-05":{"efectivo":0,"datafono":33.5},"2026-06-06":{"efectivo":14,"datafono":75},"2026-06-09":{"efectivo":0,"datafono":46},"2026-06-10":{"efectivo":0,"datafono":28.8},"2026-06-11":{"efectivo":73.99,"datafono":2.95},"2026-06-16":{"efectivo":0,"datafono":12.5},"2026-06-17":{"efectivo":10,"datafono":35},"2026-06-18":{"efectivo":64.4,"datafono":22},"2026-06-19":{"efectivo":1.5,"datafono":0},"2026-06-20":{"efectivo":14,"datafono":0},"2026-06-25":{"efectivo":12.5,"datafono":0},"2026-06-07":{"efectivo":94.6,"datafono":0},"2026-06-28":{"efectivo":72,"datafono":0},"2026-06-27":{"efectivo":12.5,"datafono":0},"2026-07-08":{"efectivo":12.5,"datafono":0},"2026-07-09":{"efectivo":53.7,"datafono":0},"2026-07-10":{"efectivo":15,"datafono":49.95},"2026-07-11":{"efectivo":15,"datafono":49.06},"2026-07-12":{"efectivo":20,"datafono":0},"2026-07-14":{"efectivo":0,"datafono":16.1},"2026-07-15":{"efectivo":0,"datafono":69.8}};
+const RECOVERED_EVS={"2026-06-24":[{"id":"btn08mx0a9lmqwk07vl","title":"SANT JOAN","resp":"","hora":"","cat":"Festivo","nota":"","done":false}],"2026-06-23":[{"id":"jvzji3j325dmqwk0isk","title":"SANT JOAN","resp":"","hora":"","cat":"Festivo","nota":"","done":false}],"2026-06-22":[{"id":"bz7s93npzhkmqwk0utg","title":"SANT JOAN","resp":"","hora":"","cat":"Festivo","nota":"","done":false}],"2026-07-01":[{"id":"3uow7izdl0ymr23x216","title":"PUBLI CAPRICHO","resp":"","hora":"","cat":"Urgente","nota":"PROMOCIONAR RESERVAS","done":false}],"2026-07-08":[{"id":"7nxi36cu0x2mr23xofj","title":"PUBLI CAPRICHO","resp":"","hora":"","cat":"Urgente","nota":"PROMOCIONAR RESERVAS","done":false}],"2026-07-15":[{"id":"cya09mxadfqmr23xv8x","title":"PUBLI CAPRICHO","resp":"","hora":"","cat":"Urgente","nota":"PROMOCIONAR RESERVAS","done":false}],"2026-07-22":[{"id":"giev2gk6e6pmr23y1y3","title":"PUBLI CAPRICHO","resp":"","hora":"","cat":"Urgente","nota":"","done":false}],"2026-07-29":[{"id":"ijfpifp41kmr23y7x0","title":"PUBLI CAPRICHO","resp":"","hora":"","cat":"Urgente","nota":"PROMOCIONAR RESERVAS","done":false}],"2026-07-05":[{"id":"huaxasj2hpmr23z12t","title":"PUBLI CAPRICHO","resp":"","hora":"","cat":"Urgente","nota":"","done":false}],"2026-07-12":[{"id":"quos90f658mr23z7bz","title":"PUBLI CAPRICHO","resp":"","hora":"","cat":"Urgente","nota":"","done":false}],"2026-07-19":[{"id":"222xx0zeqp5mr23zf95","title":"PUBLI CAPRICHO","resp":"","hora":"","cat":"Urgente","nota":"","done":false}],"2026-07-26":[{"id":"gbqicq3l3hmr23zjyd","title":"PUBLI CAPRICHO","resp":"","hora":"","cat":"Urgente","nota":"","done":false}],"2026-07-02":[{"id":"zmm0qmlpsmr242qrn","title":"PUBLI MAGIC","resp":"","hora":"","cat":"Tarea","nota":"","done":false}],"2026-07-09":[{"id":"d249i245lkumr242xs3","title":"PUBLI MAGIC","resp":"","hora":"","cat":"Tarea","nota":"","done":false}],"2026-07-16":[{"id":"h50kyn7d6h6mr24349k","title":"PUBLI MAGIC","resp":"","hora":"","cat":"Tarea","nota":"","done":false}],"2026-07-23":[{"id":"pmcv1iza4vmr2438xb","title":"PUBLI MAGIC","resp":"","hora":"","cat":"Tarea","nota":"","done":false}],"2026-07-30":[{"id":"u1ih3u54htmr243d68","title":"PUBLI MAGIC","resp":"","hora":"","cat":"Tarea","nota":"","done":false}],"2026-07-07":[{"id":"c2tw2cm3ulkmr243j7u","title":"PUBLI MAGIC","resp":"","hora":"","cat":"Tarea","nota":"","done":false}],"2026-07-14":[{"id":"cx3qngw2voamr243oo9","title":"PUBLI MAGIC","resp":"","hora":"","cat":"Tarea","nota":"","done":false}],"2026-07-21":[{"id":"d36537o6knomr243ujk","title":"PUBLI MAGIC","resp":"","hora":"","cat":"Tarea","nota":"","done":false}],"2026-07-28":[{"id":"ffjz94xjlpvmr243zdv","title":"PUBLI MAGIC","resp":"","hora":"","cat":"Tarea","nota":"","done":false}]};
+
+async function migrateOldData(){
+  try{
+    const allKeys=new Set([...Object.keys(RECOVERED_CAJAS),...Object.keys(RECOVERED_EVS)]);
+    for(const k of allKeys){
+      const dayEvs=RECOVERED_EVS[k]||[];
+      const caja=RECOVERED_CAJAS[k]||{};
+      const isEmpty=dayEvs.length===0&&(parseFloat(caja.efectivo||0)+parseFloat(caja.datafono||0))===0;
+      if(!isEmpty){
+        await setDoc(doc(db,'dias',k),{eventos:JSON.stringify(dayEvs),caja:JSON.stringify(caja)});
+      }
+    }
+    console.log('Datos recuperados correctamente');
+  }catch(e){console.error('Error recuperando datos:',e);}
+}
+
 migrateOldData().then(function(){
   onSnapshot(COL,function(snap){
     evs={};cajas={};
@@ -514,6 +532,18 @@ $('btnSave').addEventListener('click',function(){
   else evs[selDate].push(ev);
   saveDay(selDate);editId=null;clearForm();
   $('formWrap').style.display='none';$('btnAdd').style.display='';
+  renderEvList();
+});
+
+$('modalClose').addEventListener('click',function(){$('overlay').style.display='none';});
+$('overlay').addEventListener('click',function(e){if(e.target===$('overlay'))$('overlay').style.display='none';});
+$('panelClose').addEventListener('click',function(){$('dayPanel').style.display='none';selDate=null;});
+$('prev').addEventListener('click',function(){cur=new Date(cur.getFullYear(),cur.getMonth()-1,1);$('dayPanel').style.display='none';render();});
+$('next').addEventListener('click',function(){cur=new Date(cur.getFullYear(),cur.getMonth()+1,1);$('dayPanel').style.display='none';render();});
+$('todayBtn').addEventListener('click',function(){cur=new Date();$('dayPanel').style.display='none';render();});
+</script>
+</body>
+</html>
   renderEvList();
 });
 
