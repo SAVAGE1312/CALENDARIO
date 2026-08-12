@@ -249,10 +249,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const COL = collection(db, 'dias');
+const OLD_REF = doc(db, 'calendario', 'eventos');
 
 const CAT_COLORS={Turno:'#6366f1',Reunión:'#22c55e',Tarea:'#f59e0b',Urgente:'#ef4444',Festivo:'#8b5cf6',Otro:'#9ca3af'};
 const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-let evs={}, cajas={}, cur=new Date(), selDate=null, editId=null;
+let evs={}, cajas={}, cur=new Date(), selDate=null, editId=null, migrated=false;
 const $=id=>document.getElementById(id);
 const fmt=n=>parseFloat(n||0).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
 
@@ -273,15 +274,39 @@ async function saveDay(k){
   }catch(e){setSyncStatus('error');console.error(e);}
 }
 
-onSnapshot(COL,function(snap){
-  evs={};cajas={};
-  snap.forEach(function(d){
-    try{evs[d.id]=JSON.parse(d.data().eventos||'[]');cajas[d.id]=JSON.parse(d.data().caja||'{}');}catch(e){}
-  });
-  setSyncStatus('ok');
-  render();
-  if(selDate&&$('dayPanel').style.display==='block')openPanel(selDate);
-},function(e){setSyncStatus('error');console.error(e);});
+// Migra datos del formato antiguo (calendario/eventos) al nuevo (dias/YYYY-MM-DD)
+async function migrateOldData(){
+  try{
+    const {getDoc} = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+    const snap = await getDoc(OLD_REF);
+    if(!snap.exists())return;
+    const oldEvs=JSON.parse(snap.data().data||'{}');
+    const oldCajas=JSON.parse(snap.data().cajas||'{}');
+    const keys=new Set([...Object.keys(oldEvs),...Object.keys(oldCajas)]);
+    for(const k of keys){
+      const dayEvs=oldEvs[k]||[];
+      const caja=oldCajas[k]||{};
+      const isEmpty=dayEvs.length===0&&(parseFloat(caja.efectivo||0)+parseFloat(caja.datafono||0))===0;
+      if(!isEmpty){
+        await setDoc(doc(db,'dias',k),{eventos:JSON.stringify(dayEvs),caja:JSON.stringify(caja)});
+      }
+    }
+    console.log('Migración completada');
+  }catch(e){console.error('Error migrando:',e);}
+}
+
+// Primero migra datos antiguos, luego escucha la colección nueva
+migrateOldData().then(function(){
+  onSnapshot(COL,function(snap){
+    evs={};cajas={};
+    snap.forEach(function(d){
+      try{evs[d.id]=JSON.parse(d.data().eventos||'[]');cajas[d.id]=JSON.parse(d.data().caja||'{}');}catch(e){}
+    });
+    setSyncStatus('ok');
+    render();
+    if(selDate&&$('dayPanel').style.display==='block')openPanel(selDate);
+  },function(e){setSyncStatus('error');console.error(e);});
+});
 
 function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36);}
 function dateKey(y,m,d){return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');}
